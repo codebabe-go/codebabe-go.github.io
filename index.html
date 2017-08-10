@@ -414,7 +414,13 @@
 </tr>
 </tbody>
 </table>
-<p>这里先不对可视化调试工具如 jdk自带的jconsole进行介绍, 这里环境默认都是云主机, 通过ssh上去后的排查问题</p>
+<p>如图所示:<br><img src="http://ougj9thv3.bkt.clouddn.com/deadlock.jpeg" alt=""><br>这是一个死锁的程序, 可以看到一个线程是runnable一个线程是blocked  </p>
+<ul>
+<li>waiting to lock <0x00000006c924e530> (a java.lang.Object)</0x00000006c924e530></li>
+<li>locked <0x00000006c924e530> (a java.lang.Object)</0x00000006c924e530></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">public class CommonTest &#123;</div><div class="line"></div><div class="line">    private final static ExecutorService task = Executors.newFixedThreadPool(5);</div><div class="line">    private final static Object lock = new Object(); // 整个类就只有整一把锁</div><div class="line">    private final static List&lt;String&gt; list = new ArrayList&lt;String&gt;();</div><div class="line">    private static volatile Long i = 0L;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Looper l1 = new Looper();</div><div class="line">        Looper l2 = new Looper();</div><div class="line"></div><div class="line">        task.execute(l1);</div><div class="line">        task.execute(l2);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    static class Looper implements Runnable &#123;</div><div class="line"></div><div class="line">        public void run() &#123;</div><div class="line">            synchronized (lock) &#123; // 锁住</div><div class="line">                while (true) &#123;</div><div class="line">                    i++;</div><div class="line">                    list.add(i.toString());</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>这里先不对可视化调试工具如 jdk自带的jconsole进行介绍, 这里环境默认都是云主机, 通过ssh上去后的排查问题</strong></p>
 
           
         
@@ -633,7 +639,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
