@@ -94,20 +94,20 @@
 
 
 
-<meta name="description" content="jpsusage:1# jps [options] [hostid]    options 描述     -q 只输出LVMID, 省略主类的名称   -l 输出主类的全名, 如果进程执行的是jar包, 输出jar路径   -m 输出虚拟机进程启动时传递给主类main（）函数的参数   -v 启动虚拟机进程时候的参数    jstat假设你已经在你要查的服务器上了, 查看gc情况, usage1#">
+<meta name="description" content="jpsusage:1# jps [options] [hostid]    options 描述     -q 只输出LVMID, 省略主类的名称   -l 输出主类的全名, 如果进程执行的是jar包, 输出jar路径   -m 输出虚拟机进程启动时传递给主类main（）函数的参数   -v 启动虚拟机进程时候的参数">
 <meta name="keywords" content="java,jvm指令">
 <meta property="og:type" content="article">
 <meta property="og:title" content="jdk提供的指令">
 <meta property="og:url" content="http://blog.codebabe.me/2017/08/08/jdk提供的指令/index.html">
 <meta property="og:site_name" content="直到代码崩塌">
-<meta property="og:description" content="jpsusage:1# jps [options] [hostid]    options 描述     -q 只输出LVMID, 省略主类的名称   -l 输出主类的全名, 如果进程执行的是jar包, 输出jar路径   -m 输出虚拟机进程启动时传递给主类main（）函数的参数   -v 启动虚拟机进程时候的参数    jstat假设你已经在你要查的服务器上了, 查看gc情况, usage1#">
+<meta property="og:description" content="jpsusage:1# jps [options] [hostid]    options 描述     -q 只输出LVMID, 省略主类的名称   -l 输出主类的全名, 如果进程执行的是jar包, 输出jar路径   -m 输出虚拟机进程启动时传递给主类main（）函数的参数   -v 启动虚拟机进程时候的参数">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://ougj9thv3.bkt.clouddn.com/jmap.jpeg">
 <meta property="og:image" content="http://ougj9thv3.bkt.clouddn.com/deadlock.jpeg">
-<meta property="og:updated_time" content="2017-08-10T14:22:17.000Z">
+<meta property="og:updated_time" content="2017-09-06T03:26:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="jdk提供的指令">
-<meta name="twitter:description" content="jpsusage:1# jps [options] [hostid]    options 描述     -q 只输出LVMID, 省略主类的名称   -l 输出主类的全名, 如果进程执行的是jar包, 输出jar路径   -m 输出虚拟机进程启动时传递给主类main（）函数的参数   -v 启动虚拟机进程时候的参数    jstat假设你已经在你要查的服务器上了, 查看gc情况, usage1#">
+<meta name="twitter:description" content="jpsusage:1# jps [options] [hostid]    options 描述     -q 只输出LVMID, 省略主类的名称   -l 输出主类的全名, 如果进程执行的是jar包, 输出jar路径   -m 输出虚拟机进程启动时传递给主类main（）函数的参数   -v 启动虚拟机进程时候的参数">
 <meta name="twitter:image" content="http://ougj9thv3.bkt.clouddn.com/jmap.jpeg">
 
 
@@ -380,6 +380,7 @@
 </tr>
 </tbody>
 </table>
+<a id="more"></a>
 <h2 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h2><p>假设你已经在你要查的服务器上了, 查看gc情况, usage<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># jstat [option vmid [interval [s|ms] [count]] ]</div></pre></td></tr></table></figure></p>
 <p><strong>觉得只要理解这个指令就可以了</strong>, vmid虚拟进程的id, interval多久监控改一次, times次数</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># jstat -gc 42234 10 20</div></pre></td></tr></table></figure>

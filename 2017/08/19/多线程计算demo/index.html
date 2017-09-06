@@ -102,7 +102,7 @@
 <meta property="og:site_name" content="直到代码崩塌">
 <meta property="og:description" content="多线程计算demo上线数据集没有相关的时候, 如果使用串行计算可能会比较耗时无论 场景分析 query db by or/in condition:1select sum(count) from table where id in (?, ?, ?, ?)   往往当条件多的时候可能会存在走不到索引, 甚至是大范围数据扫描的情况, 这种情况下可能就需要回退为for-each-sum的计算例子中,">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-08-19T07:27:38.000Z">
+<meta property="og:updated_time" content="2017-09-06T03:26:33.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多线程计算demo">
 <meta name="twitter:description" content="多线程计算demo上线数据集没有相关的时候, 如果使用串行计算可能会比较耗时无论 场景分析 query db by or/in condition:1select sum(count) from table where id in (?, ?, ?, ?)   往往当条件多的时候可能会存在走不到索引, 甚至是大范围数据扫描的情况, 这种情况下可能就需要回退为for-each-sum的计算例子中,">
@@ -361,6 +361,7 @@
 </li>
 </ul>
 <p>这种无关性, 为多线程计算提供了一种较好的生活环境</p>
+<a id="more"></a>
 <ul>
 <li><p>multi-thread-calculate:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">final AtomicLong al = new AtomicLong(0L);</div><div class="line">ExecutorService pool = Executors.newFixedThreadPool(10);</div><div class="line">final CountDownLatch countDownLatch = new CountDownLatch(n);</div><div class="line">for (int i = 0; i &lt;= n; i++) &#123;</div><div class="line">  pool.execute(new Runnable() &#123;</div><div class="line">            @Override</div><div class="line">            public void run() &#123;</div><div class="line">              try &#123;</div><div class="line">                al.addAndGet(i);  </div><div class="line">              &#125; catch (Exception e) &#123;</div><div class="line">              &#125; finally &#123;</div><div class="line">                countDownLatch.countDown();</div><div class="line">              &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">&#125;</div><div class="line">countDownLatch.await();</div><div class="line">print(al.get());</div></pre></td></tr></table></figure>

@@ -102,7 +102,7 @@
 <meta property="og:site_name" content="直到代码崩塌">
 <meta property="og:description" content="ES Java API 使用本文主要介绍关于es的一些常见的查询java API使用 pom.xml12345678910&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.elasticsearch&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;elasticsearch&amp;lt;/artifactId&amp;gt;    &amp;lt;version">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-06T02:47:07.000Z">
+<meta property="og:updated_time" content="2017-09-06T03:26:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ES Java API 使用">
 <meta name="twitter:description" content="ES Java API 使用本文主要介绍关于es的一些常见的查询java API使用 pom.xml12345678910&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.elasticsearch&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;elasticsearch&amp;lt;/artifactId&amp;gt;    &amp;lt;version">
@@ -353,6 +353,7 @@
         <h1 id="ES-Java-API-使用"><a href="#ES-Java-API-使用" class="headerlink" title="ES Java API 使用"></a>ES Java API 使用</h1><p>本文主要介绍关于es的一些常见的查询java API使用</p>
 <h2 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.elasticsearch&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;elasticsearch&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;5.4.1&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.elasticsearch.client&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;transport&lt;/artifactId&gt;</div><div class="line">    &lt;version&gt;5.4.1&lt;/version&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
 <p><strong>注意</strong>: 本文使用的是5.4.1版本, jdk版本是1.8</p>
+<a id="more"></a>
 <h2 id="must-amp-should"><a href="#must-amp-should" class="headerlink" title="must &amp; should"></a>must &amp; should</h2><ul>
 <li><p>must: 必须得满足所有条件, 相当于<code>and</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// 查询条件构造器</div><div class="line">BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();</div><div class="line">queryBuilder</div><div class="line">  .must(QueryBuilders.termQuery(&quot;filed1&quot;, value1))</div><div class="line">  .must(QueryBuilders.termQuery(&quot;filed2&quot;, value2));</div></pre></td></tr></table></figure>
