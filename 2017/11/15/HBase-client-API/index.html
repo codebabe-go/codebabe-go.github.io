@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="hbase," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="本文是在有一定hbase编程基础下的, API使用规范, 包括hbase的结构在本文并不会有所涉及 背景通常使用hbase API我们会这么做1234Put put = new Put();Get get = new Get();Delete delete = new Delete();...">
+<meta name="keywords" content="hbase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hbase API 使用">
+<meta property="og:url" content="http://blog.codebabe.me/2017/11/15/HBase-client-API/index.html">
+<meta property="og:site_name" content="直到代码崩塌">
+<meta property="og:description" content="本文是在有一定hbase编程基础下的, API使用规范, 包括hbase的结构在本文并不会有所涉及 背景通常使用hbase API我们会这么做1234Put put = new Put();Get get = new Get();Delete delete = new Delete();...">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-15T03:53:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hbase API 使用">
+<meta name="twitter:description" content="本文是在有一定hbase编程基础下的, API使用规范, 包括hbase的结构在本文并不会有所涉及 背景通常使用hbase API我们会这么做1234Put put = new Put();Get get = new Get();Delete delete = new Delete();...">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.codebabe.me/2017/11/15/HBase-client-API/"/>
+
+
+
+
+
+  <title>hbase API 使用 | 直到代码崩塌</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bbe5ac1011b9925c6cdeaaa13dabe9c1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">直到代码崩塌</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.codebabe.me/2017/11/15/HBase-client-API/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="codebabe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://ou3zhmlis.bkt.clouddn.com/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="直到代码崩塌">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">hbase API 使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-15T11:03:54+08:00">
+                2017-11-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/大数据/" itemprop="url" rel="index">
+                    <span itemprop="name">大数据</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文是在有一定hbase编程基础下的, API使用规范, 包括hbase的结构在本文并不会有所涉及</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>通常使用hbase API我们会这么做<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Put put = <span class="keyword">new</span> Put();</div><div class="line">Get get = <span class="keyword">new</span> Get();</div><div class="line">Delete delete = <span class="keyword">new</span> Delete();</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>对于特定的存储就需要单独实现相关的<code>put</code>, <code>get</code>, <code>delete</code>方法, 进行相关操作<br>我们主要的目的就是, 实现一种简单的客户端能让hbase-client和我们的model更好的映射, 而我们并不需要去关心内部的一些实现</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>我们首先会定义一个接口如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HBaseModel</span> <span class="keyword">extends</span> <span class="title">Serializable</span> </span>&#123; <span class="comment">// 序列化是为了能通过一些rpc服务进行调用, 比如dubbo</span></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span> 自定义一个rowkey</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function">String <span class="title">rowkey</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span> 该rowkey下的记录</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function">HBaseModel <span class="title">get</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span> 如果是update为旧值, 如果是insert为null</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function">HBaseModel <span class="title">put</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span> 成功删除true, 否则false</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">delete</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 获取hbase表名</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span></span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function">String <span class="title">getTable</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function">String <span class="title">getColumnFamily</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 解析hbase获取的result为对象实例, 同时赋值该对象</span></div><div class="line"><span class="comment">     * <span class="doctag">@param</span> result &#123;<span class="doctag">@link</span> #get()&#125;获取的结果</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span></span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function">HBaseModel <span class="title">parse</span><span class="params">(Result result)</span></span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>由于<code>get</code>, <code>put</code>, <code>delete</code>实际上并没有特殊性, 这里会提供一个抽象类帮你做这种事情<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbsHBaseModel</span> <span class="keyword">implements</span> <span class="title">HBaseModel</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> HBaseModel <span class="title">get</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> HBaseTool.getTool().get(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> HBaseModel <span class="title">put</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> HBaseTool.getTool().put(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">delete</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> HBaseTool.getTool().delete(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> HBaseModel <span class="title">parse</span><span class="params">(Result result)</span> </span>&#123; <span class="comment">// 如果你是性能追求者, 你大可不必用反射来实现</span></div><div class="line">        Map&lt;<span class="keyword">byte</span>[], <span class="keyword">byte</span>[]&gt; fieldMap = result.getFamilyMap(Bytes.toBytes(getColumnFamily()));</div><div class="line">        <span class="keyword">if</span> (fieldMap != <span class="keyword">null</span>) &#123;</div><div class="line">            Class&lt;?&gt; thisClz = <span class="keyword">this</span>.getClass();</div><div class="line">            <span class="comment">// 线程安全</span></div><div class="line">            Map&lt;String, Method&gt; methodMap = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">for</span> (Field field: thisClz.getDeclaredFields()) &#123;</div><div class="line">                    String fieldName = field.getName();</div><div class="line">                    Method method = thisClz.getMethod(<span class="string">"set"</span> + StringUtils.reverseCaseByIndex(fieldName, <span class="number">0</span>), field.getType());</div><div class="line">                    methodMap.put(fieldName, method);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">for</span> (Map.Entry&lt;<span class="keyword">byte</span>[], <span class="keyword">byte</span>[]&gt; entry : fieldMap.entrySet()) &#123;</div><div class="line">                    String qualifier = Bytes.toString(entry.getKey()); <span class="comment">// qualifier: 对应字段名字</span></div><div class="line">                    <span class="keyword">byte</span>[] bValue = entry.getValue();</div><div class="line">                    <span class="comment">// 通过反射进行赋值</span></div><div class="line">                    Method method = methodMap.get(qualifier);</div><div class="line">                    Field field = thisClz.getDeclaredField(qualifier);</div><div class="line">                    Class&lt;?&gt; fieldType = field.getType();</div><div class="line">                    <span class="keyword">if</span> (Long.class.equals(fieldType)) &#123;</div><div class="line">                        method.invoke(<span class="keyword">this</span>, Bytes.toLong(bValue));</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Integer.class.equals(fieldType)) &#123;</div><div class="line">                        method.invoke(<span class="keyword">this</span>, Bytes.toInt(bValue));</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Short.class.equals(fieldType)) &#123;</div><div class="line">                        method.invoke(<span class="keyword">this</span>, Bytes.toShort(bValue));</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Double.class.equals(fieldType)) &#123;</div><div class="line">                        method.invoke(<span class="keyword">this</span>, Bytes.toDouble(bValue));</div><div class="line"><span class="comment">//                &#125; else if (Timestamp.class.equals(fieldType)) &#123;</span></div><div class="line">                    &#125; <span class="keyword">else</span> &#123; <span class="comment">// 默认都是string类型了</span></div><div class="line">                        method.invoke(<span class="keyword">this</span>, Bytes.toString(bValue));</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">catch</span> (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>有了这个类我们要做的事情就只有继承这个抽象类然后, 去玩拉~!<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HBaseModelDemo</span> <span class="keyword">extends</span> <span class="title">AbsHBaseModel</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String qual1;</div><div class="line">    <span class="keyword">private</span> String qual2;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">rowkey</span><span class="params">()</span> </span>&#123; <span class="comment">// 这个rowkey是写死的, 但是你完全可以根据你的字段来具体实现</span></div><div class="line">        <span class="keyword">return</span> <span class="string">"row1"</span>;</div><div class="line">        <span class="comment">// String.format("%s_%s", qual1, qual2);</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getTable</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"testtable"</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getColumnFamily</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"colfam1"</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getQual1</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> qual1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setQual1</span><span class="params">(String qual1)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.qual1 = qual1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getQual2</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> qual2;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setQual2</span><span class="params">(String qual2)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.qual2 = qual2;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HBaseTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> HBaseModelDemo demo = <span class="keyword">new</span> HBaseModelDemo();</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHBaseModelGet</span><span class="params">()</span> </span>&#123; <span class="comment">// 这样就可以了</span></div><div class="line">        System.out.println(JSON.toJSONString(demo.get()));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHBaseModelDelete</span><span class="params">()</span> </span>&#123;</div><div class="line">        demo.delete();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHBaseModelPut</span><span class="params">()</span> </span>&#123;</div><div class="line">        HBaseModelDemo putDemo = <span class="keyword">new</span> HBaseModelDemo();</div><div class="line">        putDemo.setQual1(<span class="string">"111"</span>);</div><div class="line">        putDemo.setQual2(<span class="string">"222"</span>);</div><div class="line">        HBaseModel ret = putDemo.put();</div><div class="line">        System.out.println(ret == <span class="keyword">null</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后提供一个hbase-client的一个简单实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HBaseTool</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(HBaseTool.class);</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="title">HBaseTool</span><span class="params">()</span> </span>&#123;</div><div class="line">        reload();</div><div class="line">        establishConn();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HBaseTool tool;</div><div class="line">    <span class="keyword">private</span> Configuration conf;</div><div class="line">    <span class="keyword">private</span> HConnection conn;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HBaseTool <span class="title">getTool</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (tool == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">synchronized</span> (HBaseTool.class) &#123;</div><div class="line">                <span class="keyword">if</span> (tool == <span class="keyword">null</span>) &#123;</div><div class="line">                    tool = <span class="keyword">new</span> HBaseTool();</div><div class="line">                    Executors.newScheduledThreadPool(<span class="number">1</span>).scheduleAtFixedRate(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">                        <span class="meta">@Override</span></div><div class="line">                        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                            <span class="keyword">try</span> &#123;</div><div class="line">                                tool.reload(); <span class="comment">// 重载一下</span></div><div class="line"><span class="comment">//                        UserGroupInformation.getCurrentUser().reloginFromKeytab(); // 登录认证</span></div><div class="line">                            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                                logger.error(<span class="string">"auth failed, cannot login"</span>, e);</div><div class="line">                            &#125;</div><div class="line">                        &#125;</div><div class="line">                    &#125;, <span class="number">5</span>, <span class="number">5</span>, TimeUnit.HOURS);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> tool;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> HBaseModel <span class="title">get</span><span class="params">(HBaseModel model)</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            HTableInterface htable = getTable(model);</div><div class="line">            Get get = <span class="keyword">new</span> Get(Bytes.toBytes(model.rowkey()));</div><div class="line">            Result result = htable.get(get);</div><div class="line">            <span class="keyword">return</span> model.parse(result);</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            logger.error(<span class="string">"hbase get a row error, rowkey = &#123;&#125;"</span>, model.rowkey(), e);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> HBaseModel <span class="title">put</span><span class="params">(HBaseModel model)</span> </span>&#123;</div><div class="line">        HBaseModel ret = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            HTableInterface htable = getTable(model);</div><div class="line">            String rowkey = model.rowkey();</div><div class="line">            Get get = <span class="keyword">new</span> Get(Bytes.toBytes(rowkey));</div><div class="line">            <span class="keyword">if</span> (htable.exists(get)) &#123;</div><div class="line">                ret = get(model);</div><div class="line">            &#125;</div><div class="line">            Put put = <span class="keyword">new</span> Put(Bytes.toBytes(rowkey));</div><div class="line">            JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(model));</div><div class="line">            Class&lt;?&gt; clz = model.getClass();</div><div class="line">            <span class="keyword">for</span> (String qualifier : jsonObject.keySet()) &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    Field field = clz.getDeclaredField(qualifier);</div><div class="line">                    Class&lt;?&gt; fieldType = field.getType();</div><div class="line">                    <span class="keyword">if</span> (Long.class.equals(fieldType)) &#123;</div><div class="line">                        Long value = jsonObject.getLong(qualifier);</div><div class="line">                        put.add(Bytes.toBytes(model.rowkey()), Bytes.toBytes(qualifier), Bytes.toBytes(value));</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Integer.class.equals(fieldType)) &#123;</div><div class="line">                        Integer value = jsonObject.getInteger(qualifier);</div><div class="line">                        put.add(Bytes.toBytes(model.rowkey()), Bytes.toBytes(qualifier), Bytes.toBytes(value));</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Short.class.equals(fieldType)) &#123;</div><div class="line">                        Short value = jsonObject.getShort(qualifier);</div><div class="line">                        put.add(Bytes.toBytes(model.rowkey()), Bytes.toBytes(qualifier), Bytes.toBytes(value));</div><div class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Double.class.equals(fieldType)) &#123;</div><div class="line">                        Double value = jsonObject.getDouble(qualifier);</div><div class="line">                        put.add(Bytes.toBytes(model.rowkey()), Bytes.toBytes(qualifier), Bytes.toBytes(value));</div><div class="line">                    &#125; <span class="keyword">else</span> &#123; <span class="comment">// 默认都是string类型了</span></div><div class="line">                        String value = jsonObject.getString(qualifier);</div><div class="line">                        put.add(Bytes.toBytes(model.getColumnFamily()), Bytes.toBytes(qualifier), Bytes.toBytes(value));</div><div class="line">                    &#125;</div><div class="line">                &#125;  <span class="keyword">catch</span> (NoSuchFieldException e) &#123;</div><div class="line">                    logger.info(<span class="string">"no such field, filed = &#123;&#125;"</span>, qualifier, e);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            htable.put(put);</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">            logger.error(<span class="string">"hbase put a row error, rowkey = &#123;&#125;"</span>, model.rowkey(), e);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> ret;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">delete</span><span class="params">(HBaseModel model)</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            HTableInterface htable = getTable(model);</div><div class="line">            Delete delete = <span class="keyword">new</span> Delete(Bytes.toBytes(model.rowkey()));</div><div class="line">            htable.delete(delete);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            logger.error(<span class="string">"hbase delete a row error, rowkey = &#123;&#125;"</span>, model.rowkey(), e);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> List&lt;HBaseModel&gt; <span class="title">scan</span><span class="params">(Scan scan, String tableName, Class&lt;HBaseModel&gt; clz)</span> </span>&#123;</div><div class="line">        List&lt;HBaseModel&gt; ret = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            HTableInterface htable = getTable(tableName);</div><div class="line">            ResultScanner results = htable.getScanner(scan);</div><div class="line">            <span class="keyword">if</span> (results != <span class="keyword">null</span>) &#123;</div><div class="line">                <span class="keyword">for</span> (Result result : results) &#123;</div><div class="line">                    HBaseModel model = clz.newInstance();</div><div class="line">                    model.parse(result);</div><div class="line">                    ret.add(model);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            logger.error(<span class="string">"hbase scan result list error, table name = &#123;&#125;"</span>, tableName, e);</div><div class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException | InstantiationException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> ret;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// <span class="doctag">TODO:</span> 01/11/2017 批量操作待补充</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchGet</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchPut</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchDelete</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> HTableInterface <span class="title">getTable</span><span class="params">(String tableName)</span> </span>&#123;</div><div class="line">        <span class="keyword">int</span> retry = <span class="number">0</span>;</div><div class="line">        <span class="comment">// 获取表是核心, 这里添加重试机制</span></div><div class="line">        <span class="keyword">while</span> (retry &lt;= <span class="number">3</span>) &#123; <span class="comment">// 重试三次, 这里可配置</span></div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">return</span> conn.getTable(Bytes.toBytes(tableName));</div><div class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">                retry++;</div><div class="line">                logger.error(<span class="string">"get hbase table failed, table name = &#123;&#125;, retry times = &#123;&#125;"</span>, tableName, retry, e);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        disConn(); <span class="comment">// 获取table失败就关闭好了</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> HTableInterface <span class="title">getTable</span><span class="params">(HBaseModel model)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> getTable(model.getTable());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 关闭连接</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">disConn</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (conn != <span class="keyword">null</span> &amp;&amp; !conn.isClosed()) &#123;</div><div class="line">            conn = <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * <span class="doctag">@return</span> 获取hbase连接</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">private</span> HConnection <span class="title">establishConn</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            conn = HConnectionManager.createConnection(conf);</div><div class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">            logger.error(<span class="string">"get conn error"</span>, e);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> conn;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line"><span class="comment">     * 默认为 classpath:hbase-default.xml/hbase-site.xml</span></div><div class="line"><span class="comment">     */</span></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">reload</span><span class="params">()</span> </span>&#123;</div><div class="line">        Configuration newConf = HBaseConfiguration.create();</div><div class="line">        <span class="keyword">if</span> (conf != <span class="keyword">null</span>) &#123;</div><div class="line">            HBaseConfiguration.merge(conf, newConf);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            conf = newConf;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="API使用踩坑"><a href="#API使用踩坑" class="headerlink" title="API使用踩坑"></a>API使用踩坑</h2><p>初始我们使用的是<code>0.98.8-hadoop2</code>这个版本的Hadoop-client但是, 这个1X以下的有一个很严重的问题, 就是会在包中加入servlet2.5版本的东西(orz 这个就很尴尬), 导致我们web相关项目都起不来, <a href="https://issues.apache.org/jira/browse/HBASE-9557" target="_blank" rel="external">jira</a>, 然后我们升级了1.0.1, 然后改造了HBaseTool</p>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>该实现会导致hbase存在每个服务中, 和每个服务高度耦合, 另外做法也有提供一个微服务去专门做这件事情(我们项目为了解耦使用服务化这个实现), 这个时候相关接口中得去掉Hbase相关的操作比如<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@return</span> 该rowkey下的记录</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function">HBaseModel <span class="title">get</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@return</span> 如果是update为旧值, 如果是insert为null</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function">HBaseModel <span class="title">put</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * <span class="doctag">@return</span> 成功删除true, 否则false</span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">delete</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"><span class="comment"> * 解析hbase获取的result为对象实例, 同时赋值该对象</span></div><div class="line"><span class="comment"> * <span class="doctag">@param</span> result &#123;<span class="doctag">@link</span> #get()&#125;获取的结果</span></div><div class="line"><span class="comment"> * <span class="doctag">@return</span></span></div><div class="line"><span class="comment"> */</span></div><div class="line"><span class="function">HBaseModel <span class="title">parse</span><span class="params">(Result result)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>将这放到服务接口中去实现, 实现和基本服务的解耦</p>
+<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><p>可以查看我的<a href="https://github.com/codebabe-go/hithop-spring/blob/master/engine/src/test/java/test/codebabe/engine/hbase/HBaseTest.java" target="_blank" rel="external">github</a>, 这个项目主要还是学习为主, 所以还是沿用老版本的<code>0.98.8-hadoop2</code>包, 有意服务化的可以在github上联系我</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hbase/" rel="tag"># hbase</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/05/esAPI/" rel="next" title="ES Java API 使用">
+                <i class="fa fa-chevron-left"></i> ES Java API 使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://ou3zhmlis.bkt.clouddn.com/avatar.png"
+               alt="codebabe" />
+          <p class="site-author-name" itemprop="name">codebabe</p>
+           
+              <p class="site-description motion-element" itemprop="description">撸此代码三十年</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/codebabe-go" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/codebabe" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API使用踩坑"><span class="nav-number">3.</span> <span class="nav-text">API使用踩坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺点"><span class="nav-number">4.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo"><span class="nav-number">5.</span> <span class="nav-text">demo</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">codebabe</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
