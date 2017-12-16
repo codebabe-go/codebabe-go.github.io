@@ -97,14 +97,14 @@
 <meta name="description" content="基于java &amp;amp; scala的多线程计算实例, 可理解为基于的mr思想的计算demo 场景分析 query db by or/in condition:1select sum(count) from table where id in (?, ?, ?, ?)   往往当条件多的时候可能会存在走不到索引, 甚至是大范围数据扫描的情况, 这种情况下可能就需要回退为for-each-sum的计">
 <meta name="keywords" content="java,Scala,多线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="多线程计算demo">
+<meta property="og:title" content="map-reduce多线程模型">
 <meta property="og:url" content="http://blog.codebabe.me/2017/08/19/多线程计算demo/index.html">
 <meta property="og:site_name" content="直到代码崩塌">
 <meta property="og:description" content="基于java &amp;amp; scala的多线程计算实例, 可理解为基于的mr思想的计算demo 场景分析 query db by or/in condition:1select sum(count) from table where id in (?, ?, ?, ?)   往往当条件多的时候可能会存在走不到索引, 甚至是大范围数据扫描的情况, 这种情况下可能就需要回退为for-each-sum的计">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-15T02:36:39.000Z">
+<meta property="og:updated_time" content="2017-11-15T06:25:20.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="多线程计算demo">
+<meta name="twitter:title" content="map-reduce多线程模型">
 <meta name="twitter:description" content="基于java &amp;amp; scala的多线程计算实例, 可理解为基于的mr思想的计算demo 场景分析 query db by or/in condition:1select sum(count) from table where id in (?, ?, ?, ?)   往往当条件多的时候可能会存在走不到索引, 甚至是大范围数据扫描的情况, 这种情况下可能就需要回退为for-each-sum的计">
 
 
@@ -140,7 +140,7 @@
 
 
 
-  <title>多线程计算demo | 直到代码崩塌</title>
+  <title>map-reduce多线程模型 | 直到代码崩塌</title>
   
 
 
@@ -310,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">多线程计算demo</h1>
+          <h1 class="post-title" itemprop="name headline">map-reduce多线程模型</h1>
         
 
         <div class="post-meta">
@@ -530,7 +530,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -541,7 +541,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -552,7 +552,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
